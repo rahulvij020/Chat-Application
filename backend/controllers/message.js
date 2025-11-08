@@ -1,6 +1,9 @@
 import User from "../models/user.js";
 import Message from "../models/message.js";
 import { isValidObjectId } from "mongoose";
+import { getReceiverSocketId, io } from "../lib/socket.js";
+import { sendMessageValidation } from "../validation/message.js";
+import cloudinary from '../lib/cloudinary.js';
 
 export const sendMessage = async (req, res, next) => {
     try {
@@ -32,6 +35,11 @@ export const sendMessage = async (req, res, next) => {
             image: image
         };
         const message = await Message.create(data);
+        const receiverSocketId = getReceiverSocketId(receiverId.toString());
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit('newMessage', { message });
+        }
+        console.log("Receiver Socket ID:", receiverSocketId);
         return res.status(201).json({ success: true, message });
     } catch (error) {
         return next(error);
