@@ -3,7 +3,7 @@ import User from '../models/user.js';
 
 export const protectRoute = async (req, res, next) => {
     try {
-        const token = req.cookies.token || req.header('Authorization')?.replace('Bearer ', '');
+        const token = req.cookies.jwt || req.header('Authorization')?.replace('Bearer ', '');
         if (!token) {
             return res.status(401).json({ message: "Unauthorized - No token provided" });
         }
@@ -15,7 +15,7 @@ export const protectRoute = async (req, res, next) => {
         if (!user) {
             return res.status(401).json({ message: "User not found" });
         }
-        req.user = decoded;
+        req.user = user;
         next();
     } catch (error) {
         console.log("Error in protectRoute middleware:", error);

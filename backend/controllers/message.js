@@ -19,7 +19,7 @@ export const sendMessage = async (req, res, next) => {
             return res.status(400).json({ message: "Cannot send message to yourself" });
         }
         const body = req.body;
-        const error = sendMessageValidation(body);
+        const { error } = sendMessageValidation(body);
         if (error) {
             return res.status(400).json({ message: error.message, error: error.details });
         }
