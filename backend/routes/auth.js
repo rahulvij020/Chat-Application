@@ -7,6 +7,7 @@ import { protectRoute } from '../middlewares/auth.js';
 router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);
+router.get('/profile/:id', protectRoute, authController.getProfile);
 router.put('/profile', protectRoute, authController.updateProfile);
 
 export default router;
