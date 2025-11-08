@@ -2,7 +2,7 @@ import User from '../models/user.js';
 import bcrypt from 'bcryptjs';
 import { isValidObjectId } from 'mongoose';
 import { registerValidation, loginValidation, updateProfileValidation } from '../validation/user.js';
-import { generateToken } from '../utils/token.js';
+import { generateToken } from '../utils/generateToken.js';
 import cloudinary from '../lib/cloudinary.js';
 
 export const signup = async (req, res, next) => {

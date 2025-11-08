@@ -5,7 +5,7 @@ import { socketMiddleware } from "../middlewares/socket.js";
 
 const app = express();
 const server = http.createServer(app);
-export const io = new Server(server, {
+const io = new Server(server, {
     cors: {
         origin: process.env.FRONTEND_URL,
         credentials: true,
