@@ -25,24 +25,36 @@ const MessageInput = ({ onSend }) => {
     if (selectedImage && selectedImage.type.startsWith("image/")) {
       setImage(selectedImage);
     } else {
-      alert("Please select an image file (jpg, png, gif, webp, etc.)");
+      alert("Please select a valid image file (jpg, png, gif, webp, etc.)");
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center gap-3 p-3 border-t border-white/20 bg-white/10 backdrop-blur-md"
+      className="flex items-center animate-slide-in-up"
+      style={{
+        background: "var(--surface, #fff)",
+        borderColor: "var(--border-light, #e5e7eb)",
+        padding: "1rem",
+        gap: "0.75rem",
+      }}
     >
-      {/* Image upload button */}
+      {/* Image Upload Button */}
       <button
         type="button"
         onClick={() => fileInputRef.current.click()}
-        className="p-3 bg-white/20 hover:bg-white/30 rounded-full text-white transition"
         title="Attach image"
+        className="rounded-full hover-lift transition-all"
+        style={{
+          background: "var(--background, #f5f5f5)",
+          color: "var(--text-secondary, #555)",
+          padding: "0.75rem",
+        }}
       >
         <ImagePlus size={20} />
       </button>
+
       <input
         type="file"
         ref={fileInputRef}
@@ -51,37 +63,64 @@ const MessageInput = ({ onSend }) => {
         accept="image/*"
       />
 
-      {/* Image preview */}
+      {/* Image Preview */}
       {image && (
-        <div className="relative">
+        <div style={{ position: "relative" }}>
           <img
             src={URL.createObjectURL(image)}
             alt="preview"
-            className="w-10 h-10 rounded-lg object-cover border border-white/20"
+            className="rounded-lg object-cover border"
+            style={{ 
+              borderColor: "var(--border-light, #e5e7eb)",
+              borderWidth: "1px",
+              borderStyle: "solid",
+              width: "2.5rem",
+              height: "2.5rem",
+            }}
           />
           <button
             type="button"
             onClick={() => setImage(null)}
-            className="absolute -top-2 -right-2 bg-red-500 rounded-full p-0.5 hover:bg-red-600"
+            className="rounded-full"
+            style={{
+              position: "absolute",
+              top: "-0.5rem",
+              right: "-0.5rem",
+              background: "#ef4444",
+              padding: "0.125rem",
+            }}
+            onMouseEnter={(e) => e.target.style.background = "#dc2626"}
+            onMouseLeave={(e) => e.target.style.background = "#ef4444"}
           >
-            <X size={14} className="text-white" />
+            <X size={14} style={{ color: "white" }} />
           </button>
         </div>
       )}
 
-      {/* Text input */}
+      {/* Text Input */}
       <input
         type="text"
         placeholder="Type a message..."
         value={text}
         onChange={(e) => setText(e.target.value)}
-        className="flex-1 px-4 py-2 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="flex-1 rounded-full focus:outline-none transition-all"
+        style={{
+          background: "var(--background, #f5f5f5)",
+          border: "1px solid var(--border-light, #ddd)",
+          color: "var(--text-main, #111)",
+          padding: "0.625rem 1.25rem",
+        }}
       />
 
-      {/* Send button */}
+      {/* Send Button */}
       <button
         type="submit"
-        className="p-3 bg-blue-500 hover:bg-blue-600 rounded-full text-white transition"
+        title="Send"
+        className="rounded-full text-white shadow-md hover-lift transition-all"
+        style={{
+          background: "var(--primary-color, #00A884)",
+          padding: "0.75rem",
+        }}
       >
         <Send size={20} />
       </button>

@@ -1,1 +1,201 @@
 @import "tailwindcss";
+
+/* ================================
+   🌿 WHATSAPP-LIKE LIGHT THEME BASE
+   ================================ */
+
+:root {
+  --primary-color: #00a884; /* WhatsApp green */
+  --primary-gradient: linear-gradient(135deg, #00a884, #20c997);
+  --secondary-gradient: linear-gradient(135deg, #84fab0, #8fd3f4);
+  --background: #f0f2f5;
+  --surface: #ffffff;
+  --text-main: #111b21;
+  --text-secondary: #54656f;
+  --chat-me: #dcf8c6;
+  --chat-other: #ffffff;
+  --border-light: #e9edef;
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ================================
+   ✨ GLOBAL RESET
+   ================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+  color: var(--text-main);
+  background-color: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ================================
+   🌿 SCROLLBAR
+   ================================ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #c7c7c7;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a6a6a6;
+}
+
+/* ================================
+   🎨 GRADIENT HELPERS
+   ================================ */
+.gradient-primary {
+  background: var(--primary-gradient);
+}
+.gradient-secondary {
+  background: var(--secondary-gradient);
+}
+
+/* ================================
+   💎 SURFACE & CARD ELEMENTS
+   ================================ */
+.surface {
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  padding: 1rem;
+}
+
+/* ================================
+   🟩 BUTTONS
+   ================================ */
+.btn-primary {
+  background: var(--primary-gradient);
+  color: #fff;
+  padding: 0.65rem 1.6rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 168, 132, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 168, 132, 0.4);
+}
+
+/* ================================
+   ✏️ INPUT FIELDS
+   ================================ */
+.input-field {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 168, 132, 0.15);
+}
+
+.input-field::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+/* ================================
+   💬 CHAT BUBBLES
+   ================================ */
+.chat-bubble-me {
+  background-color: var(--chat-me);
+  border-radius: 12px 12px 0 12px;
+  padding: 0.6rem 1rem;
+  max-width: 80%;
+  align-self: flex-end;
+  color: var(--text-main);
+}
+
+.chat-bubble-other {
+  background-color: var(--chat-other);
+  border-radius: 12px 12px 12px 0;
+  padding: 0.6rem 1rem;
+  max-width: 80%;
+  align-self: flex-start;
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+}
+
+/* ================================
+   🪄 ANIMATIONS
+   ================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out;
+}
+
+/* ================================
+   ✨ HOVER / INTERACTION HELPERS
+   ================================ */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s ease;
+}
+.hover-glow:hover {
+  box-shadow: 0 0 10px rgba(0, 168, 132, 0.3);
+}
+
+/* ================================
+   🌈 TEXT UTILITIES
+   ================================ */
+.text-gradient {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ================================
+   📱 RESPONSIVE HELPERS
+   ================================ */
+@media (max-width: 768px) {
+  .card {
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

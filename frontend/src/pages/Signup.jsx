@@ -23,28 +23,25 @@ const Signup = () => {
     const checkUser = async () => {
       try {
         const response = await authCheck();
-        if (response.success) {
-          navigate("/");
-        }
+        if (response.success) navigate("/");
       } catch (error) {
         console.log(error);
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
-    }
+    };
     checkUser();
   }, [navigate]);
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
     try {
-      e.preventDefault();
-
-      if (form.password !== form.confirmPassword) {
-        setError("Passwords do not match");
-        return;
-      }
-
       const userData = {
         name: form.name,
         email: form.email,
@@ -58,82 +55,115 @@ const Signup = () => {
         setError(response.message || "Signup failed. Try again.");
       }
     } catch (error) {
-      console.log(error);
-    }
-    finally {
+      console.error(error);
+      setError("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
-    <>
-      {loading && <LoadingScreen />}
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-500 via-indigo-500 to-purple-600 p-4">
-        <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-white/20">
-          <h1 className="text-3xl font-bold text-white text-center mb-6">
-            Create Account
-          </h1>
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ background: "var(--background)", padding: "1rem" }}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl shadow-md border animate-fade-in"
+        style={{
+          background: "var(--surface, #fff)",
+          borderColor: "var(--border-light, #e5e7eb)",
+          borderWidth: "1px",
+          borderStyle: "solid",
+          padding: "2.5rem 2rem",
+        }}
+      >
+        {/* Title */}
+        <h1
+          className="text-3xl font-bold text-center"
+          style={{ color: "var(--text-main)", marginBottom: "0.5rem" }}
+        >
+          Create Account
+        </h1>
+        <p
+          className="text-center"
+          style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}
+        >
+          Join the conversation today 👋
+        </p>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              name="name"
-              placeholder="Full Name"
-              value={form.name}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={form.email}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="input-field"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="input-field"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+            className="input-field"
+          />
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            required
+            className="input-field"
+          />
 
-            {error && (
-              <p className="text-red-300 text-sm text-center">{error}</p>
-            )}
+          {error && (
+            <p className="text-red-500 text-sm text-center font-medium" style={{ margin: "0" }}>
+              {error}
+            </p>
+          )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 mt-4 bg-linear-to-r from-blue-400 to-purple-500 text-white font-semibold rounded-lg hover:scale-[1.02] transition-transform duration-200 shadow-lg"
-            >
-              Sign Up
-            </button>
-          </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full hover-lift"
+            style={{ width: "100%" }}
+          >
+            Sign Up
+          </button>
+        </form>
 
-          <p className="text-center text-white mt-6">
-            Already have an account?{" "}
-            <Link to="/login" className="text-blue-300 hover:underline">
-              Log In
-            </Link>
-          </p>
-        </div>
+        {/* Footer */}
+        <p
+          className="text-center"
+          style={{ color: "var(--text-secondary)", marginTop: "1.5rem" }}
+        >
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-medium hover:underline"
+            style={{ color: "var(--primary-color, #00A884)" }}
+          >
+            Log In
+          </Link>
+        </p>
       </div>
-    </>
+    </div>
   );
 };
 

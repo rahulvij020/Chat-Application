@@ -31,7 +31,7 @@ const ProfileModal = ({ show, onClose, user }) => {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.readAsDataURL(file); // 👈 converts image to Base64
+    reader.readAsDataURL(file);
 
     reader.onloadend = () => {
       const base64Image = reader.result;
@@ -44,7 +44,7 @@ const ProfileModal = ({ show, onClose, user }) => {
     try {
       const payload = {
         name: profile.name,
-        avatar: profile.avatar, // Base64 string or existing URL
+        avatar: profile.avatar,
       };
 
       const response = await updateProfile(payload, user._id);
@@ -79,32 +79,73 @@ const ProfileModal = ({ show, onClose, user }) => {
     <>
       {loading && <LoadingScreen />}
 
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl w-[90%] max-w-sm relative">
+      <div 
+        className="fixed inset-0 flex items-center justify-center z-50"
+        style={{ background: "rgba(0, 0, 0, 0.4)" }}
+      >
+        <div
+          className="relative rounded-2xl shadow-xl animate-scale-in"
+          style={{
+            background: "var(--surface, #fff)",
+            border: "1px solid var(--border-light, #e5e7eb)",
+            width: "90%",
+            maxWidth: "28rem",
+            padding: "1.5rem",
+          }}
+        >
+          {/* Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 text-white hover:text-gray-300"
+            className="absolute transition"
+            style={{
+              top: "0.75rem",
+              right: "0.75rem",
+              color: "#6b7280",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              padding: "0.25rem",
+            }}
+            onMouseEnter={(e) => e.target.style.color = "#374151"}
+            onMouseLeave={(e) => e.target.style.color = "#6b7280"}
           >
             <X size={20} />
           </button>
 
-          <h2 className="text-xl font-semibold text-white mb-4 text-center">
+          {/* Header */}
+          <h2
+            className="text-xl font-semibold text-center"
+            style={{ color: "var(--text-main, #111)", marginBottom: "1rem" }}
+          >
             Manage Profile
           </h2>
 
-          <div className="flex flex-col items-center mb-4">
+          {/* Avatar */}
+          <div className="flex flex-col items-center" style={{ marginBottom: "1rem" }}>
             <div
               onClick={() => fileInputRef.current.click()}
-              className="relative w-20 h-20 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center cursor-pointer border border-white/30 overflow-hidden"
+              className="relative rounded-full flex items-center justify-center cursor-pointer border overflow-hidden hover-lift"
+              style={{
+                background: profile.preview ? "transparent" : "var(--background, #f9f9f9)",
+                borderColor: "var(--border-light, #e5e7eb)",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                width: "6rem",
+                height: "6rem",
+              }}
             >
               {profile.preview ? (
                 <img
                   src={profile.preview}
                   alt="Avatar"
-                  className="w-full h-full rounded-full object-cover"
+                  className="rounded-full object-cover"
+                  style={{ width: "100%", height: "100%" }}
                 />
               ) : (
-                <UserCircle size={48} className="text-white/80" />
+                <UserCircle
+                  size={60}
+                  style={{ color: "var(--text-secondary, #999)" }}
+                />
               )}
             </div>
 
@@ -116,34 +157,61 @@ const ProfileModal = ({ show, onClose, user }) => {
               onChange={handleAvatarChange}
             />
 
-            <p className="text-gray-300 text-sm mt-2 cursor-pointer">
+            <p
+              className="text-sm cursor-pointer"
+              style={{ color: "var(--text-secondary, #666)", marginTop: "0.5rem" }}
+            >
               Click to change avatar
             </p>
           </div>
 
+          {/* Name Input */}
           <input
             type="text"
             value={profile.name}
             onChange={(e) =>
               setProfile((prev) => ({ ...prev, name: e.target.value }))
             }
-            className="w-full px-3 py-2 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full input-field"
             placeholder="Enter your name"
+            style={{ marginBottom: "1rem" }}
           />
 
+          {/* Save Button */}
           <button
             onClick={handleSave}
             disabled={loading}
-            className="mt-4 w-full flex items-center justify-center gap-2 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition"
+            className="btn-primary w-full flex items-center justify-center transition"
+            style={{
+              background: "var(--primary-color, #00A884)",
+              border: "none",
+              color: "#fff",
+              width: "100%",
+              gap: "0.5rem",
+              cursor: "pointer",
+            }}
           >
             <Save size={18} />
             Save Changes
           </button>
 
+          {/* Logout Button */}
           <button
             onClick={handleLogout}
             disabled={loading}
-            className="mt-3 w-full flex items-center justify-center gap-2 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition"
+            className="w-full flex items-center justify-center rounded-lg transition"
+            style={{
+              background: "#ef4444",
+              color: "#fff",
+              width: "100%",
+              gap: "0.5rem",
+              padding: "0.5rem",
+              marginTop: "0.75rem",
+              border: "none",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => e.target.style.background = "#dc2626"}
+            onMouseLeave={(e) => e.target.style.background = "#ef4444"}
           >
             <LogOut size={18} />
             Logout

@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar.jsx";
 import ChatScreen from "../components/ChatScreen.jsx";
 import MessageInput from "../components/MessageInput.jsx";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authCheck } from "../services/auth.js";
 import LoadingScreen from "../components/LoadingScreen.jsx";
@@ -15,65 +14,94 @@ const Chat = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-     const checkUser = async () => {
-       try {
-         const response = await authCheck();
-         if (!response.success) {
-           navigate("/login");
-         }
-         setUser(response.user);
-       } catch (error) {
-         console.log(error);
-       }
-       finally {
-         setLoading(false);
-       }
-     }
-     checkUser();
-   }, [navigate]);
+    const checkUser = async () => {
+      try {
+        const response = await authCheck();
+        if (!response.success) navigate("/login");
+        else setUser(response.user);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkUser();
+  }, [navigate]);
 
   const handleSend = (text) => {
     const newMsg = { text, sender: "me" };
     setMessages((prev) => [...prev, newMsg]);
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
-    <>
-    {loading && <LoadingScreen/>}
-    <div className="min-h-screen flex justify-center items-center bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700 p-2">
-      <div className="flex w-full max-w-6xl h-[90vh] shadow-2xl rounded-2xl overflow-hidden border border-white/20 bg-white/5 backdrop-blur-md">
+    <div
+      className="min-h-screen flex justify-center items-center"
+      style={{ background: "var(--background)", padding: "0.5rem" }}
+    >
+      <div
+        className="flex w-full max-w-6xl h-[90vh] shadow-lg rounded-2xl overflow-hidden border"
+        style={{
+          background: "var(--surface, #fff)",
+          borderColor: "var(--border-light, #e5e7eb)",
+          borderWidth: "1px",
+          borderStyle: "solid",
+        }}
+      >
+        {/* Sidebar Section */}
         <div
           className={`${
             selectedUser ? "hidden md:flex" : "flex"
-          } w-full md:w-1/4 bg-white/10 border-r border-white/20 flex-col`}
+          } w-full md:w-1/4 flex-col border-r`}
+          style={{ borderColor: "var(--border-light, #e5e7eb)", borderWidth: "1px", borderStyle: "solid" }}
         >
           <Sidebar
-            user = {user}
+            user={user}
             selectedUser={selectedUser}
             onSelectUser={setSelectedUser}
           />
         </div>
 
+        {/* Chat Section */}
         <div
           className={`flex flex-col flex-1 ${
             !selectedUser ? "hidden md:flex" : "flex"
           }`}
+          style={{ background: "#fff" }}
         >
           {selectedUser && (
             <button
               onClick={() => setSelectedUser(null)}
-              className="md:hidden text-white bg-white/20 px-3 py-1 m-2 rounded-lg text-sm hover:bg-white/30 transition"
+              className="md:hidden border rounded-lg text-sm transition"
+              style={{
+                color: "var(--text-main, #111b21)",
+                background: "var(--background, #f0f2f5)",
+                borderColor: "var(--border-light, #e9edef)",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                padding: "0.5rem 1rem",
+                margin: "0.5rem",
+              }}
+              onMouseEnter={(e) => e.target.style.background = "#e5e7eb"}
+              onMouseLeave={(e) => e.target.style.background = "var(--background, #f0f2f5)"}
             >
               ← Back
             </button>
           )}
 
           <ChatScreen selectedUser={selectedUser} messages={messages} />
-          {selectedUser && <MessageInput onSend={handleSend} />}
+          {selectedUser && (
+            <div
+              className="border-t"
+              style={{ borderColor: "var(--border-light, #e5e7eb)", borderWidth: "1px", borderStyle: "solid" }}
+            >
+              <MessageInput onSend={handleSend} />
+            </div>
+          )}
         </div>
       </div>
     </div>
-    </>
   );
 };
 

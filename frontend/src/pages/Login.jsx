@@ -10,6 +10,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const checkUser = async () => {
@@ -20,16 +21,16 @@ const Login = () => {
         }
       } catch (error) {
         console.log(error);
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
-    }
+    };
     checkUser();
   }, [navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -38,66 +39,102 @@ const Login = () => {
     try {
       const response = await login(form);
       if (response.success) {
-        navigate("/");
+        navigate("/chat");
       } else {
-        // Handle login failure (e.g., show error message)
+        setError(response.message || "Invalid email or password");
       }
     } catch (error) {
       console.error("Login error:", error);
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  if (loading) return <LoadingScreen />;
+
   return (
-    <>
-      {loading && <LoadingScreen />}
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ background: "var(--background)", padding: "1rem" }}
+    >
+      <div
+        className="w-full max-w-md rounded-2xl shadow-md border animate-fade-in"
+        style={{
+          background: "var(--surface, #fff)",
+          borderColor: "var(--border-light, #e5e7eb)",
+          borderWidth: "1px",
+          borderStyle: "solid",
+          padding: "2.5rem 2rem",
+        }}
+      >
+        {/* Title */}
+        <h1
+          className="text-3xl font-bold text-center"
+          style={{ color: "var(--text-main)", marginBottom: "0.5rem" }}
+        >
+          Welcome Back
+        </h1>
+        <p
+          className="text-center"
+          style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}
+        >
+          Log in to continue your chat 💬
+        </p>
 
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-500 via-indigo-500 to-blue-500 p-4">
-        <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-white/20">
-          <h1 className="text-3xl font-bold text-white text-center mb-6">
-            Welcome Back
-          </h1>
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="input-field"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+            className="input-field"
+          />
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={form.email}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 rounded-lg bg-white/20 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-400"
-            />
+          {error && (
+            <p className="text-red-500 text-sm text-center font-medium" style={{ margin: "0" }}>
+              {error}
+            </p>
+          )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className={`w-full py-2 mt-4 bg-linear-to-r from-purple-400 to-blue-500 text-white font-semibold rounded-lg transition-transform duration-200 shadow-lg ${loading ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02]"
-                }`}
-            >
-              {loading ? "Logging In..." : "Log In"}
-            </button>
-          </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-primary w-full hover-lift"
+            style={{ width: "100%" }}
+          >
+            {loading ? "Logging In..." : "Log In"}
+          </button>
+        </form>
 
-          <p className="text-center text-white mt-6">
-            Don’t have an account?{" "}
-            <Link to="/signup" className="text-blue-300 hover:underline">
-              Sign Up
-            </Link>
-          </p>
-        </div>
+        {/* Footer */}
+        <p
+          className="text-center"
+          style={{ color: "var(--text-secondary)", marginTop: "1.5rem" }}
+        >
+          Don’t have an account?{" "}
+          <Link
+            to="/signup"
+            className="font-medium hover:underline"
+            style={{ color: "var(--primary-color, #00A884)" }}
+          >
+            Sign Up
+          </Link>
+        </p>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -5,6 +5,7 @@ import Chat from "./pages/Chat.jsx";
 import NotFound from "./components/NotFound.jsx";
 import { Toaster } from "react-hot-toast";
 import LoadingScreen from "./components/LoadingScreen.jsx";
+import LandingPage from "./pages/LandingPage.jsx";
 
 const App = () => {
   return (
@@ -12,7 +13,8 @@ const App = () => {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Chat />} />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/" element={<LandingPage/>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
