@@ -1,7 +1,7 @@
 import User from '../models/user.js';
 import bcrypt from 'bcryptjs';
 import { isValidObjectId } from 'mongoose';
-import { registerValidation, loginValidation, updateProfileValidation } from '../validation/user.js';
+import { registerValidation, loginValidation } from '../validation/user.js';
 import { generateToken } from '../utils/generateToken.js';
 import cloudinary from '../lib/cloudinary.js';
 
@@ -24,8 +24,8 @@ export const signup = async (req, res, next) => {
             password: hashedPassword,
         };
         const user = await User.create(data);
-        const token = generateToken(user._id, res);
-        return res.status(201).json({ success: true, token, user });
+        // const token = generateToken(user._id, res);
+        return res.status(201).json({ success: true, user });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
@@ -48,7 +48,7 @@ export const login = async (req, res, next) => {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
         const token = generateToken(user._id, res);
-        return res.status(200).json({ success: true, token, user });
+        return res.status(200).json({ success: true, user });
     } catch (error) {
     }
 };
@@ -82,16 +82,10 @@ export const updateProfile = async (req, res, next) => {
             return res.status(404).json({ message: 'User not found' });
         }
         const body = req.body;
-        const { error } = updateProfileValidation(body);
-        if (error) {
-            return res.status(400).json({ message: error.message, error: error.details });
-        }
-        if (req.file) {
-            const uploadedResponse = await cloudinary.uploader.upload(req.file);
-            console.log("Inside req.file",uploadedResponse);
+        if (body.avatar) {
+            const uploadedResponse = await cloudinary.uploader.upload(body.avatar);
             body.avatar = uploadedResponse.secure_url;
         }
-        console.log(body);
         const updatedUser = await User.findByIdAndUpdate(id, body, { new: true });
         return res.status(200).json({ success: true, updatedUser });
     } catch (error) {

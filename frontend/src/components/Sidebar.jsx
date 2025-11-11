@@ -1,23 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UserCircle } from "lucide-react";
 import ProfileModal from "./ProfileModal.jsx";
 import SidebarTabs from "./SidebarTabs.jsx";
 import ChatListShimmer from "./ChatListShimmer.jsx";
+import { getChats, getContacts } from "../services/message.js";
 
-const Sidebar = ({ users, contacts, selectedUser, onSelectUser }) => {
+const Sidebar = ({user, selectedUser, onSelectUser }) => {
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState("chats");
+  const [activeTab, setActiveTab] = useState("contacts");
+  const [loading, setLoading] = useState(false);
+  const [chats, setChats] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [profile, setProfile] = useState({
-    name: "Rahul Sharma",
-    avatar: null,
-  });
 
-  const data = activeTab === "chats" ? users : contacts;
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        if (activeTab === "chats") {
+          const response = await getChats();
+          setChats(response.chats);
+        }
+        else {
+          const response = await getContacts();
+          setContacts(response);
+        }
+      } catch (error) {
+        console.log("Error fetching chats", error);
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [activeTab]);
 
-  const filteredList = data.filter((u) =>
-    u.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const data = activeTab === "chats" ? chats : contacts;
 
   return (
     <div className="flex flex-col h-full bg-white/5 backdrop-blur-md border-r border-white/10">
@@ -48,21 +66,19 @@ const Sidebar = ({ users, contacts, selectedUser, onSelectUser }) => {
         />
       </div>
 
-      {/* User List */}
-      {/* <ChatListShimmer /> */}
+      {loading && <ChatListShimmer />}
       <div className="flex-1 overflow-y-auto mt-3">
-        {filteredList.length === 0 ? (
+        {data.length === 0 ? (
           <p className="text-gray-400 text-center mt-6">
             No {activeTab} found
           </p>
         ) : (
-          filteredList.map((user) => (
+          data.map((user) => (
             <div
               key={user._id}
               onClick={() => onSelectUser(user)}
-              className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-white/10 transition ${
-                selectedUser?._id === user._id ? "bg-white/10" : ""
-              }`}
+              className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-white/10 transition ${selectedUser?._id === user._id ? "bg-white/10" : ""
+                }`}
             >
               <div className="h-10 w-10 rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold">
                 {user.name[0].toUpperCase()}
@@ -82,11 +98,7 @@ const Sidebar = ({ users, contacts, selectedUser, onSelectUser }) => {
       <ProfileModal
         show={showProfileModal}
         onClose={() => setShowProfileModal(false)}
-        profile={profile}
-        setProfile={setProfile}
-        onLogout={() => {
-          console.log("User logged out");
-        }}
+        user = {user}
       />
     </div>
   );

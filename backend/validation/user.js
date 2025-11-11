@@ -17,10 +17,10 @@ export const loginValidation = (data) => {
     return schema.validate(data, { abortEarly: false });
 }
 
-export const updateProfileValidation = (data) => {
-    const schema = Joi.object({
-        name: Joi.string().min(3).max(30).optional(),
-        email: Joi.string().email().optional(),
-    });
-    return schema.validate(data, { abortEarly: false });
-}
+// export const updateProfileValidation = (data) => {
+//     const schema = Joi.object({
+//         name: Joi.string().min(3).max(30).optional(),
+//         email: Joi.string().email().optional(),
+//     });
+//     return schema.validate(data, { abortEarly: false });
+// }
