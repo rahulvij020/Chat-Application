@@ -11,7 +11,7 @@ const Chat = () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [messages, setMessages] = useState([]);
+  // const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -28,10 +28,10 @@ const Chat = () => {
     checkUser();
   }, [navigate]);
 
-  const handleSend = (text) => {
-    const newMsg = { text, sender: "me" };
-    setMessages((prev) => [...prev, newMsg]);
-  };
+  // const handleSend = (text) => {
+  //   const newMsg = { text, sender: "me" };
+  //   setMessages((prev) => [...prev, newMsg]);
+  // };
 
   if (loading) return <LoadingScreen />;
 
@@ -51,9 +51,8 @@ const Chat = () => {
       >
         {/* Sidebar Section */}
         <div
-          className={`${
-            selectedUser ? "hidden md:flex" : "flex"
-          } w-full md:w-1/4 flex-col border-r`}
+          className={`${selectedUser ? "hidden md:flex" : "flex"
+            } w-full md:w-1/4 flex-col border-r`}
           style={{ borderColor: "var(--border-light, #e5e7eb)", borderWidth: "1px", borderStyle: "solid" }}
         >
           <Sidebar
@@ -65,9 +64,8 @@ const Chat = () => {
 
         {/* Chat Section */}
         <div
-          className={`flex flex-col flex-1 ${
-            !selectedUser ? "hidden md:flex" : "flex"
-          }`}
+          className={`flex flex-col flex-1 ${!selectedUser ? "hidden md:flex" : "flex"
+            }`}
           style={{ background: "#fff" }}
         >
           {selectedUser && (
@@ -90,13 +88,13 @@ const Chat = () => {
             </button>
           )}
 
-          <ChatScreen selectedUser={selectedUser} messages={messages} />
+          <ChatScreen selectedUser={selectedUser} currentUserId={user?._id} />
           {selectedUser && (
             <div
               className="border-t"
               style={{ borderColor: "var(--border-light, #e5e7eb)", borderWidth: "1px", borderStyle: "solid" }}
             >
-              <MessageInput onSend={handleSend} />
+              <MessageInput selectedUser={selectedUser}/>
             </div>
           )}
         </div>

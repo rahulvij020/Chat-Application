@@ -1,32 +1,53 @@
 import { useState, useRef } from "react";
 import { Send, ImagePlus, X } from "lucide-react";
+import { sendMessage } from "../services/message";
 
-const MessageInput = ({ onSend }) => {
+const MessageInput = ({ selectedUser }) => {
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text.trim() && !image) return;
 
-    const messageData = {
-      text: text.trim(),
-      image: image ? { name: image.name, type: image.type, data: image } : null,
-    };
-
-    onSend(messageData);
-    setText("");
-    setImage(null);
-  };
+    setLoading(true);
+    try {
+      const messageData = {
+        content: text.trim(),
+        image: image || "",
+      };
+      const response = await sendMessage(messageData, selectedUser._id);
+      console.log("Send Message Response --->>>", response);
+      setText("");
+      setImage(null);
+      setImagePreview(null);
+    } catch (error) {
+      console.log("Error in sending message", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const handleFileChange = (e) => {
-    const selectedImage = e.target.files[0];
-    if (selectedImage && selectedImage.type.startsWith("image/")) {
-      setImage(selectedImage);
-    } else {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
       alert("Please select a valid image file (jpg, png, gif, webp, etc.)");
+      return;
     }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onloadend = () => {
+      const base64Image = reader.result;
+      setImage(base64Image);
+      setImagePreview(base64Image);
+    };
   };
 
   return (
@@ -64,13 +85,13 @@ const MessageInput = ({ onSend }) => {
       />
 
       {/* Image Preview */}
-      {image && (
+      {imagePreview && (
         <div style={{ position: "relative" }}>
           <img
-            src={URL.createObjectURL(image)}
+            src={imagePreview}
             alt="preview"
             className="rounded-lg object-cover border"
-            style={{ 
+            style={{
               borderColor: "var(--border-light, #e5e7eb)",
               borderWidth: "1px",
               borderStyle: "solid",
@@ -80,7 +101,10 @@ const MessageInput = ({ onSend }) => {
           />
           <button
             type="button"
-            onClick={() => setImage(null)}
+            onClick={() => {
+              setImage(null);
+              setImagePreview(null);
+            }}
             className="rounded-full"
             style={{
               position: "absolute",
@@ -116,6 +140,7 @@ const MessageInput = ({ onSend }) => {
       <button
         type="submit"
         title="Send"
+        disabled = {loading}
         className="rounded-full text-white shadow-md hover-lift transition-all"
         style={{
           background: "var(--primary-color, #00A884)",

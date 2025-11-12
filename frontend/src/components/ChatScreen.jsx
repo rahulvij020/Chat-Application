@@ -1,7 +1,33 @@
 import ChatHeader from "./ChatHeader";
 import ChatContainer from "./ChatContainer";
+import { getMessages } from "../services/message.js";
+import { useEffect, useState } from "react";
 
-const ChatScreen = ({ selectedUser, messages }) => {
+const ChatScreen = ({ selectedUser, currentUserId }) => {
+  const [loading, setLoading] = useState(true);
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (!selectedUser?._id) return;
+      
+      setLoading(true);
+      try {
+        const response = await getMessages(selectedUser._id);
+        console.log("Fetch Messages Response --->>>", response);
+        if (response.success) {
+          setMessages(response.messages);
+        }
+      } catch (error) {
+        console.log("Error fetching messages", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, [selectedUser?._id]);
+
   if (!selectedUser)
     return (
       <div
@@ -55,7 +81,7 @@ const ChatScreen = ({ selectedUser, messages }) => {
       <ChatHeader selectedUser={selectedUser} />
 
       {/* Chat Messages */}
-      <ChatContainer messages={messages} />
+      <ChatContainer messages={messages} loading={loading} currentUserId={currentUserId} />
     </div>
   );
 };
