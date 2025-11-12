@@ -23,16 +23,19 @@ export const sendMessage = async (req, res, next) => {
         if (error) {
             return res.status(400).json({ message: error.message, error: error.details });
         }
-        if (req.file) {
-            const uploadedResponse = await cloudinary.uploader.upload(req.file);
+        
+        let imageUrl = null;
+        if (body.image) {
+            const uploadedResponse = await cloudinary.uploader.upload(body.image);
             console.log(uploadedResponse);
-            const image = uploadedResponse.secure_url;
+            imageUrl = uploadedResponse.secure_url;
         }
+        
         const data = {
             sender: req.user._id,
             receiver: receiverId,
             content: body.content,
-            image: image
+            image: imageUrl || null
         };
         const message = await Message.create(data);
         const receiverSocketId = getReceiverSocketId(receiverId.toString());
