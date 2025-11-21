@@ -5,11 +5,16 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import { app, server } from "./lib/socket.js";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
+
+// Morgan logging middleware
+app.use(morgan('dev'));
+
 app.use(cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
