@@ -18,10 +18,10 @@ const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [] }) => {
       setLoading(true);
       try {
         if (activeTab === "chats") {
-          const response = await getChats();
+          const response = await getChats(search);
           setChats(response.chats);
         } else {
-          const response = await getContacts();
+          const response = await getContacts(search);
           setContacts(response);
         }
       } catch (error) {
@@ -30,8 +30,14 @@ const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [] }) => {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [activeTab]);
+
+    // Debounce search
+    const timeoutId = setTimeout(() => {
+      fetchData();
+    }, search ? 300 : 0);
+
+    return () => clearTimeout(timeoutId);
+  }, [activeTab, search]);
 
   const data = activeTab === "chats" ? chats : contacts;
 
@@ -110,11 +116,7 @@ const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [] }) => {
             No {activeTab} found
           </p>
         ) : (
-          data
-            .filter((item) =>
-              item.name.toLowerCase().includes(search.toLowerCase())
-            )
-            .map((item) => {
+          data.map((item) => {
               const itemId = item._id || item.userId;
               return (
                 <div

@@ -74,7 +74,16 @@ export const getMessages = async (req, res, next) => {
 
 export const getAllUsers = async (req, res, next) => {
     try {
-        const users = await User.find({ _id: { $ne: req.user._id } }).select('_id name avatar');
+        const { search } = req.query;
+        
+        let query = { _id: { $ne: req.user._id } };
+        
+        // Add regex search if search parameter exists
+        if (search && search.trim()) {
+            query.name = { $regex: search, $options: 'i' };
+        }
+        
+        const users = await User.find(query).select('_id name avatar');
         return res.json(users);
     } catch (error) {
         return next(error);
@@ -83,14 +92,50 @@ export const getAllUsers = async (req, res, next) => {
 
 export const getAllChats = async (req, res, next) => {
     try {
-        const chatPartners = await Message.aggregate([
+        const { search } = req.query;
+        
+        const pipeline = [
             { $match: { $or: [{ sender: req.user._id }, { receiver: req.user._id }], deleted: false } },
-            { $project: { partnerId: { $cond: [{ $eq: ["$sender", req.user._id] }, "$receiver", "$sender"] } } },
-            { $group: { _id: "$partnerId" } },
+            { 
+                $sort: { createdAt: -1 } 
+            },
+            { 
+                $project: { 
+                    partnerId: { $cond: [{ $eq: ["$sender", req.user._id] }, "$receiver", "$sender"] },
+                    createdAt: 1
+                } 
+            },
+            { 
+                $group: { 
+                    _id: "$partnerId",
+                    lastMessageTime: { $first: "$createdAt" } 
+                } 
+            },
             { $lookup: { from: "users", localField: "_id", foreignField: "_id", as: "user" } },
             { $unwind: "$user" },
-            { $project: { _id: 0, userId: "$user._id", name: "$user.name", avatar: "$user.avatar" } }
-        ]);
+            { 
+                $project: { 
+                    _id: 0, 
+                    userId: "$user._id", 
+                    name: "$user.name", 
+                    avatar: "$user.avatar",
+                    lastMessageTime: 1
+                } 
+            },
+            {
+                $sort: { lastMessageTime: -1 } // Sort chats by most recent message
+            }
+        ];
+        
+        if (search && search.trim()) {
+            pipeline.push({
+                $match: {
+                    name: { $regex: search, $options: 'i' }
+                }
+            });
+        }
+        
+        const chatPartners = await Message.aggregate(pipeline);
         return res.json({ success: true, chats: chatPartners });
     } catch (error) {
         return next(error);
