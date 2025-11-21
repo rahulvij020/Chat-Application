@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar.jsx";
 import ChatScreen from "../components/ChatScreen.jsx";
-import MessageInput from "../components/MessageInput.jsx";
 import { useNavigate } from "react-router-dom";
 import { authCheck } from "../services/auth.js";
 import LoadingScreen from "../components/LoadingScreen.jsx";
+import socketService from "../lib/socket.js";
 
 const Chat = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
-  // const [messages, setMessages] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -27,6 +27,24 @@ const Chat = () => {
     };
     checkUser();
   }, [navigate]);
+
+  // Initialize socket connection and listen for online users
+  useEffect(() => {
+    if (user?._id) {
+      socketService.connect();
+
+      const handleOnlineUsers = (users) => {
+        console.log("Online users:", users);
+        setOnlineUsers(users);
+      };
+
+      socketService.on("getOnlineUsers", handleOnlineUsers);
+
+      return () => {
+        socketService.off("getOnlineUsers", handleOnlineUsers);
+      };
+    }
+  }, [user?._id]);
 
   // const handleSend = (text) => {
   //   const newMsg = { text, sender: "me" };
@@ -59,6 +77,7 @@ const Chat = () => {
             user={user}
             selectedUser={selectedUser}
             onSelectUser={setSelectedUser}
+            onlineUsers={onlineUsers}
           />
         </div>
 
@@ -88,15 +107,7 @@ const Chat = () => {
             </button>
           )}
 
-          <ChatScreen selectedUser={selectedUser} currentUserId={user?._id} />
-          {selectedUser && (
-            <div
-              className="border-t"
-              style={{ borderColor: "var(--border-light, #e5e7eb)", borderWidth: "1px", borderStyle: "solid" }}
-            >
-              <MessageInput selectedUser={selectedUser}/>
-            </div>
-          )}
+          <ChatScreen selectedUser={selectedUser} currentUserId={user?._id} onlineUsers={onlineUsers} />
         </div>
       </div>
     </div>

@@ -1,11 +1,17 @@
 import ChatHeader from "./ChatHeader";
 import ChatContainer from "./ChatContainer";
+import MessageInput from "./MessageInput";
 import { getMessages } from "../services/message.js";
 import { useEffect, useState } from "react";
+import socketService from "../lib/socket.js";
 
-const ChatScreen = ({ selectedUser, currentUserId }) => {
+const ChatScreen = ({ selectedUser, currentUserId, onlineUsers = [] }) => {
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
+
+  const addMessage = (message) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
+  };
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -26,6 +32,27 @@ const ChatScreen = ({ selectedUser, currentUserId }) => {
     };
 
     fetchMessages();
+  }, [selectedUser?._id]);
+
+  // Socket listener for new messages
+  useEffect(() => {
+    const handleNewMessage = ({ message }) => {
+      console.log("New message received:", message);
+      
+      // Only update messages if the message is relevant to current chat
+      if (
+        selectedUser?._id &&
+        (message.sender === selectedUser._id || message.receiver === selectedUser._id)
+      ) {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      }
+    };
+
+    socketService.on("newMessage", handleNewMessage);
+
+    return () => {
+      socketService.off("newMessage", handleNewMessage);
+    };
   }, [selectedUser?._id]);
 
   if (!selectedUser)
@@ -75,13 +102,22 @@ const ChatScreen = ({ selectedUser, currentUserId }) => {
       className="flex-1 flex flex-col"
       style={{
         background: "var(--chat-bg, #eae6df)",
+        minHeight: 0,
       }}
     >
       {/* Header */}
-      <ChatHeader selectedUser={selectedUser} />
+      <ChatHeader selectedUser={selectedUser} onlineUsers={onlineUsers} />
 
       {/* Chat Messages */}
       <ChatContainer messages={messages} loading={loading} currentUserId={currentUserId} />
+
+      {/* Message Input */}
+      <div
+        className="border-t"
+        style={{ borderColor: "var(--border-light, #e5e7eb)", borderWidth: "1px", borderStyle: "solid" }}
+      >
+        <MessageInput selectedUser={selectedUser} onMessageSent={addMessage} />
+      </div>
     </div>
   );
 };

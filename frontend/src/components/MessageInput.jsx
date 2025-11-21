@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Send, ImagePlus, X } from "lucide-react";
 import { sendMessage } from "../services/message";
 
-const MessageInput = ({ selectedUser }) => {
+const MessageInput = ({ selectedUser, onMessageSent }) => {
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -21,6 +21,12 @@ const MessageInput = ({ selectedUser }) => {
       };
       const response = await sendMessage(messageData, selectedUser._id);
       console.log("Send Message Response --->>>", response);
+      
+      // Add message to local state immediately
+      if (response.success && response.message) {
+        onMessageSent(response.message);
+      }
+      
       setText("");
       setImage(null);
       setImagePreview(null);

@@ -1,6 +1,8 @@
 import { Phone, Video, MoreVertical } from "lucide-react";
 
-const ChatHeader = ({ selectedUser }) => {
+const ChatHeader = ({ selectedUser, onlineUsers = [] }) => {
+  const isOnline = onlineUsers.includes(selectedUser._id);
+
   return (
     <div
       className="flex items-center justify-between border-b shadow-sm"
@@ -34,12 +36,22 @@ const ChatHeader = ({ selectedUser }) => {
           >
             {selectedUser.name}
           </h2>
-          <p
-            className="text-sm"
-            style={{ color: "var(--text-secondary, #666)" }}
-          >
-            Online
-          </p>
+          <div className="flex items-center" style={{ gap: "0.375rem" }}>
+            <div
+              style={{
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                background: isOnline ? "#10b981" : "#9ca3af",
+              }}
+            />
+            <p
+              className="text-sm"
+              style={{ color: "var(--text-secondary, #666)", fontSize: "13px" }}
+            >
+              {isOnline ? "Online" : "Offline"}
+            </p>
+          </div>
         </div>
       </div>
 

@@ -3,8 +3,12 @@ import jwt from "jsonwebtoken";
 
 export const socketMiddleware = async (socket, next) => {
     try {
-        const token = socket.handshake.headers.cookie
-        console.log("Socket token:", token);
+        const cookieString = socket.handshake.headers.cookie;
+        console.log("Socket cookies:", cookieString);
+        
+        // Parse the JWT token from the cookie string
+        const token = cookieString?.split(';').find(c => c.trim().startsWith('jwt='))?.split('=')[1];
+        
         if (!token) {
             return next(new Error('Authentication error: Token not provided'));
         }

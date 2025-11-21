@@ -20,11 +20,16 @@ const ChatContainer = ({ messages, loading, currentUserId }) => {
 
   return (
     <div
-      className="flex-1 overflow-y-auto"
+      className="flex-1 overflow-y-auto custom-scrollbar"
       style={{
         background: "linear-gradient(to bottom, #e5ddd5 0%, #eae6df 100%)",
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d9d9d9' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         padding: "16px 0",
+        scrollBehavior: "smooth",
+        minHeight: 0,
+        height: "100%",
+        overflowY: "auto",
+        overflowX: "hidden",
       }}
     >
       {messages?.length === 0 ? (
@@ -41,17 +46,26 @@ const ChatContainer = ({ messages, loading, currentUserId }) => {
             const showDate = i === 0 || 
               new Date(messages[i - 1].createdAt).toDateString() !== 
               new Date(msg.createdAt).toDateString();
+            
+            // Check if previous message is from same sender for tighter spacing
+            const prevMsg = i > 0 ? messages[i - 1] : null;
+            const isConsecutive = prevMsg && prevMsg.sender === msg.sender;
+            const marginBottom = isConsecutive ? "4px" : "8px";
 
             return (
               <div key={msg._id || i}>
                 {/* Date Separator */}
                 {showDate && (
-                  <div className="flex justify-center my-4">
+                  <div className="flex justify-center" style={{ margin: "12px 0 8px 0", padding: "0 16px" }}>
                     <div
-                      className="px-3 py-1 rounded-lg text-xs font-medium shadow-sm"
                       style={{
-                        background: "#ffffff",
+                        background: "rgba(255, 255, 255, 0.9)",
                         color: "#667781",
+                        padding: "6px 12px",
+                        borderRadius: "8px",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
                       }}
                     >
                       {new Date(msg.createdAt).toLocaleDateString("en-US", {
@@ -65,26 +79,37 @@ const ChatContainer = ({ messages, loading, currentUserId }) => {
 
                 {/* Message Bubble */}
                 <div
-                  className={`flex ${isOwnMessage ? "justify-end" : "justify-start"} mb-3 px-4`}
+                  className="flex"
+                  style={{
+                    justifyContent: isOwnMessage ? "flex-end" : "flex-start",
+                    marginBottom: marginBottom,
+                    paddingLeft: isOwnMessage ? "64px" : "12px",
+                    paddingRight: isOwnMessage ? "12px" : "64px",
+                  }}
                 >
                   <div
-                    className="max-w-[70%] md:max-w-md rounded-lg shadow-md"
+                    className="rounded-lg shadow-md"
                     style={{
                       background: isOwnMessage ? "#d9fdd3" : "#ffffff",
                       borderRadius: isOwnMessage
                         ? "8px 8px 2px 8px"
                         : "8px 8px 8px 2px",
+                      maxWidth: "65%",
+                      minWidth: "100px",
                     }}
                   >
                     {/* Image */}
                     {msg.image && (
-                      <div className="relative">
+                      <div className="relative" style={{ overflow: "hidden" }}>
                         <img
                           src={msg.image}
                           alt="attachment"
                           className="w-full object-cover cursor-pointer"
                           style={{
                             maxHeight: "300px",
+                            maxWidth: "100%",
+                            height: "auto",
+                            display: "block",
                             borderTopLeftRadius: "8px",
                             borderTopRightRadius: "8px",
                           }}
@@ -154,7 +179,7 @@ const ChatContainer = ({ messages, loading, currentUserId }) => {
               </div>
             );
           })}
-          <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} style={{ height: "1px", paddingBottom: "8px" }} />
         </>
       )}
     </div>

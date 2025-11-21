@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { UserCircle } from "lucide-react";
 import ProfileModal from "./ProfileModal.jsx";
 import SidebarTabs from "./SidebarTabs.jsx";
-import ChatListShimmer from "./ChatListShimmer.jsx";
 import { getChats, getContacts } from "../services/message.js";
+import ChatShimmer from "./ChatShimmer.jsx";
 
-const Sidebar = ({ user, selectedUser, onSelectUser }) => {
+const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [] }) => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("contacts");
   const [loading, setLoading] = useState(false);
@@ -102,9 +102,9 @@ const Sidebar = ({ user, selectedUser, onSelectUser }) => {
       </div>
 
       {/* Chat or Contact List */}
-      {loading && <ChatListShimmer />}
+      {loading && <ChatShimmer />}
 
-      <div className="flex-1 overflow-y-auto" style={{ marginTop: "0.75rem" }}>
+      <div className="flex-1 overflow-y-auto custom-scrollbar" style={{ marginTop: "0.75rem" }}>
         {data.length === 0 ? (
           <p className="text-center" style={{ color: "#6b7280", marginTop: "1.5rem" }}>
             No {activeTab} found
@@ -114,44 +114,63 @@ const Sidebar = ({ user, selectedUser, onSelectUser }) => {
             .filter((item) =>
               item.name.toLowerCase().includes(search.toLowerCase())
             )
-            .map((item) => (
-              <div
-                key={item._id}
-                onClick={() => onSelectUser(item)}
-                className="flex items-center cursor-pointer transition"
-                style={{
-                  gap: "0.75rem",
-                  padding: "0.75rem",
-                  background: selectedUser?._id === item._id ? "var(--background, #f0f2f5)" : "transparent",
-                }}
-                onMouseEnter={(e) => {
-                  if (selectedUser?._id !== item._id) {
-                    e.currentTarget.style.background = "var(--background, #f0f2f5)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (selectedUser?._id !== item._id) {
-                    e.currentTarget.style.background = "transparent";
-                  }
-                }}
-              >
-                <div className="rounded-full flex items-center justify-center font-semibold text-white"
+            .map((item) => {
+              const itemId = item._id || item.userId;
+              return (
+                <div
+                  key={itemId}
+                  onClick={() => onSelectUser({ ...item, _id: itemId })}
+                  className="flex items-center cursor-pointer transition"
                   style={{
-                    background: "var(--primary-color, #00A884)",
-                    height: "2.5rem",
-                    width: "2.5rem",
+                    gap: "0.75rem",
+                    padding: "0.75rem",
+                    background: selectedUser?._id === itemId ? "var(--background, #f0f2f5)" : "transparent",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selectedUser?._id !== itemId) {
+                      e.currentTarget.style.background = "var(--background, #f0f2f5)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedUser?._id !== itemId) {
+                      e.currentTarget.style.background = "transparent";
+                    }
                   }}
                 >
-                  {item.name[0].toUpperCase()}
+                  <div style={{ position: "relative" }}>
+                    <div className="rounded-full flex items-center justify-center font-semibold text-white"
+                      style={{
+                        background: "var(--primary-color, #00A884)",
+                        height: "2.5rem",
+                        width: "2.5rem",
+                      }}
+                    >
+                      {item.name[0].toUpperCase()}
+                    </div>
+                    {onlineUsers.includes(itemId) && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: "0",
+                          right: "0",
+                          width: "0.75rem",
+                          height: "0.75rem",
+                          borderRadius: "50%",
+                          background: "#10b981",
+                          border: "2px solid #fff",
+                        }}
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium" style={{ color: "var(--text-main, #111)" }}>{item.name}</p>
+                    <p className="text-sm truncate" style={{ color: "#6b7280", maxWidth: "150px" }}>
+                      {item.email}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium" style={{ color: "var(--text-main, #111)" }}>{item.name}</p>
-                  <p className="text-sm truncate" style={{ color: "#6b7280", maxWidth: "150px" }}>
-                    {item.email}
-                  </p>
-                </div>
-              </div>
-            ))
+              );
+            })
         )}
       </div>
 

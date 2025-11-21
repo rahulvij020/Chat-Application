@@ -82,7 +82,7 @@ const LandingPage = () => {
 
           <div style={{ paddingTop: "1rem" }}>
             <Link
-              to="/signup"
+              to="/chat"
               className="inline-block rounded-xl text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105"
               style={{ 
                 background: "linear-gradient(135deg, #00a884, #20c997)",
