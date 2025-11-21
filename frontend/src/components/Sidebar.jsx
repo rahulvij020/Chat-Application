@@ -62,17 +62,25 @@ const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [], setUser }
 
         <button
           onClick={() => setShowProfileModal(true)}
-          className="flex items-center rounded-lg transition"
+          className="flex items-center justify-center rounded-full transition overflow-hidden"
           style={{
-            gap: "0.5rem",
-            padding: "0.25rem 0.75rem",
-            background: "rgba(255, 255, 255, 0.2)",
-            fontSize: "0.875rem",
+            height: "2.5rem",
+            width: "2.5rem",
+            background: user.avatar ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.3)",
+            border: "2px solid rgba(255, 255, 255, 0.5)",
           }}
-          onMouseEnter={(e) => e.target.style.background = "rgba(255, 255, 255, 0.3)"}
-          onMouseLeave={(e) => e.target.style.background = "rgba(255, 255, 255, 0.2)"}
+          onMouseEnter={(e) => e.target.style.background = "rgba(255, 255, 255, 0.4)"}
+          onMouseLeave={(e) => e.target.style.background = user.avatar ? "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.3)"}
         >
-          <UserCircle size={20} />
+          {user.avatar ? (
+            <img
+              src={user.avatar}
+              alt={user.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <UserCircle size={24} />
+          )}
         </button>
       </div>
 
@@ -140,14 +148,22 @@ const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [], setUser }
                   }}
                 >
                   <div style={{ position: "relative" }}>
-                    <div className="rounded-full flex items-center justify-center font-semibold text-white"
+                    <div className="rounded-full flex items-center justify-center font-semibold text-white overflow-hidden"
                       style={{
-                        background: "var(--primary-color, #00A884)",
+                        background: item.avatar ? "transparent" : "var(--primary-color, #00A884)",
                         height: "2.5rem",
                         width: "2.5rem",
                       }}
                     >
-                      {item.name[0].toUpperCase()}
+                      {item.avatar ? (
+                        <img
+                          src={item.avatar}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        item.name[0].toUpperCase()
+                      )}
                     </div>
                     {onlineUsers.includes(itemId) && (
                       <div

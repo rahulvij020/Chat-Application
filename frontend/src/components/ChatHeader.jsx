@@ -18,14 +18,22 @@ const ChatHeader = ({ selectedUser, onlineUsers = [] }) => {
       <div className="flex items-center" style={{ gap: "0.75rem" }}>
         {/* Avatar */}
         <div
-          className="rounded-full flex items-center justify-center text-white font-semibold text-base"
+          className="rounded-full flex items-center justify-center text-white font-semibold text-base overflow-hidden"
           style={{
-            background: "var(--primary-color, #00A884)",
+            background: selectedUser.avatar ? "transparent" : "var(--primary-color, #00A884)",
             height: "2.5rem",
             width: "2.5rem",
           }}
         >
-          {selectedUser.name?.[0]?.toUpperCase()}
+          {selectedUser.avatar ? (
+            <img
+              src={selectedUser.avatar}
+              alt={selectedUser.name}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            selectedUser.name?.[0]?.toUpperCase()
+          )}
         </div>
 
         {/* Name & Status */}

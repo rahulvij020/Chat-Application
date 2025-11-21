@@ -87,7 +87,6 @@ export const getAllUsers = async (req, res, next) => {
         
         let query = { _id: { $ne: req.user._id } };
         
-        // Add regex search if search parameter exists
         if (search && search.trim()) {
             query.name = { $regex: search, $options: 'i' };
         }
