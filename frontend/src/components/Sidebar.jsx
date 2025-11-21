@@ -5,7 +5,7 @@ import SidebarTabs from "./SidebarTabs.jsx";
 import { getChats, getContacts } from "../services/message.js";
 import ChatShimmer from "./ChatShimmer.jsx";
 
-const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [] }) => {
+const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [], setUser }) => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("contacts");
   const [loading, setLoading] = useState(false);
@@ -181,6 +181,7 @@ const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [] }) => {
         show={showProfileModal}
         onClose={() => setShowProfileModal(false)}
         user={user}
+        setUser={setUser}
       />
     </div>
   );

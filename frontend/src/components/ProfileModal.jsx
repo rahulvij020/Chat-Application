@@ -4,7 +4,7 @@ import { logout, updateProfile } from "../services/auth.js";
 import { UserCircle, X, LogOut, Save } from "lucide-react";
 import LoadingScreen from "./LoadingScreen.jsx";
 
-const ProfileModal = ({ show, onClose, user }) => {
+const ProfileModal = ({ show, onClose, user, setUser }) => {
   const navigate = useNavigate();
   const fileInputRef = useRef();
   const [loading, setLoading] = useState(false);
@@ -30,26 +30,30 @@ const ProfileModal = ({ show, onClose, user }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onloadend = () => {
-      const base64Image = reader.result;
-      setProfile((prev) => ({ ...prev, avatar: base64Image, preview: base64Image }));
-    };
+    // Store the file object directly
+    setProfile((prev) => ({ 
+      ...prev, 
+      avatar: file, 
+      preview: URL.createObjectURL(file) 
+    }));
   };
 
   const handleSave = async () => {
     setLoading(true);
     try {
-      const payload = {
-        name: profile.name,
-        avatar: profile.avatar,
-      };
+      const formData = new FormData();
+      formData.append('name', profile.name);
+      if (profile.avatar && typeof profile.avatar !== 'string') {
+        formData.append('avatar', profile.avatar);
+      }
 
-      const response = await updateProfile(payload, user._id);
+      const response = await updateProfile(formData, user._id);
       if (response.success) {
         console.log("Profile updated:", response.updatedUser);
+        // Update the user state in parent component
+        if (setUser) {
+          setUser(response.updatedUser);
+        }
         onClose();
       } else {
         console.error("Failed to update profile:", response.message);

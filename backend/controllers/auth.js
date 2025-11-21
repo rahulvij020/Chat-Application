@@ -82,8 +82,17 @@ export const updateProfile = async (req, res, next) => {
             return res.status(404).json({ message: 'User not found' });
         }
         const body = req.body;
-        if (body.avatar) {
-            const uploadedResponse = await cloudinary.uploader.upload(body.avatar);
+        if (req.file) {
+            const uploadedResponse = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    { folder: 'chat_avatars' },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                );
+                uploadStream.end(req.file.buffer);
+            });
             body.avatar = uploadedResponse.secure_url;
         }
         const updatedUser = await User.findByIdAndUpdate(id, body, { new: true });

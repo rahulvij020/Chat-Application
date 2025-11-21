@@ -15,11 +15,13 @@ const MessageInput = ({ selectedUser, onMessageSent }) => {
 
     setLoading(true);
     try {
-      const messageData = {
-        content: text.trim(),
-        image: image || "",
-      };
-      const response = await sendMessage(messageData, selectedUser._id);
+      const formData = new FormData();
+      formData.append('content', text.trim());
+      if (image) {
+        formData.append('image', image);
+      }
+      
+      const response = await sendMessage(formData, selectedUser._id);
       console.log("Send Message Response --->>>", response);
       
       // Add message to local state immediately
@@ -46,14 +48,12 @@ const MessageInput = ({ selectedUser, onMessageSent }) => {
       return;
     }
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onloadend = () => {
-      const base64Image = reader.result;
-      setImage(base64Image);
-      setImagePreview(base64Image);
-    };
+    // Store the file object directly instead of converting to base64
+    setImage(file);
+    
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
   };
 
   return (

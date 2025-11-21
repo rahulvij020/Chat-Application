@@ -78,6 +78,7 @@ const Chat = () => {
             selectedUser={selectedUser}
             onSelectUser={setSelectedUser}
             onlineUsers={onlineUsers}
+            setUser={setUser}
           />
         </div>
 
