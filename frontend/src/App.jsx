@@ -1,6 +1,6 @@
 import { Navigate, Routes, Route } from "react-router-dom";
-import Signup from "./pages/signup.jsx";
-import Login from "./pages/login.jsx";
+import Signup from "./pages/Signup.jsx";
+import Login from "./pages/Login.jsx";
 import Chat from "./pages/Chat.jsx";
 import NotFound from "./components/NotFound.jsx";
 import { Toaster } from "react-hot-toast";
