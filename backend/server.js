@@ -16,9 +16,13 @@ const PORT = process.env.PORT || 5000;
 app.use(morgan('dev'));
 
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
+  origin: function(origin, callback){
+    // Allow any origin
+    callback(null, true);
+  },
+  credentials: true
 }));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use('/api/auth', authRoutes);
