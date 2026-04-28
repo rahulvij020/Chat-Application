@@ -15,13 +15,14 @@ const PORT = process.env.PORT || 5000;
 // Morgan logging middleware
 app.use(morgan('dev'));
 
-app.use(cors({
-  origin: function(origin, callback){
-    // Allow any origin
-    callback(null, true);
-  },
-  credentials: true
-}));
+const corsOptions = {
+  origin: process.env.FRONTEND_URL, 
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
