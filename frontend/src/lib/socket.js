@@ -1,6 +1,8 @@
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:5000";
+const SOCKET_URL = import.meta.env.MODE === 'development' 
+    ? "http://localhost:5000" 
+    : "https://chat-application-gd6d.onrender.com";
 
 class SocketService {
   constructor() {
