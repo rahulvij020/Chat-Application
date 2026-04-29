@@ -50,12 +50,19 @@ export const login = async (req, res, next) => {
         const token = generateToken(user._id, res);
         return res.status(200).json({ success: true, user });
     } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 };
 
 export const logout = async (req, res, next) => {
     try {
-        res.clearCookie('jwt');
+        res.clearCookie('jwt',{
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'none',
+            path: '/',
+        });
         return res.status(200).json({ success: true });
     } catch (error) {
         console.error(error);
