@@ -5,7 +5,7 @@ import { getMessages } from "../services/message.js";
 import { useEffect, useState } from "react";
 import socketService from "../lib/socket.js";
 
-const ChatScreen = ({ selectedUser, currentUserId, onlineUsers = [] }) => {
+const ChatScreen = ({ selectedUser, currentUserId, onlineUsers = [], onBack }) => {
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState([]);
 
@@ -106,7 +106,7 @@ const ChatScreen = ({ selectedUser, currentUserId, onlineUsers = [] }) => {
       }}
     >
       {/* Header */}
-      <ChatHeader selectedUser={selectedUser} onlineUsers={onlineUsers} />
+      <ChatHeader selectedUser={selectedUser} onlineUsers={onlineUsers} onBack={onBack} />
 
       {/* Chat Messages */}
       <ChatContainer messages={messages} loading={loading} currentUserId={currentUserId} />

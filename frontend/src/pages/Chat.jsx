@@ -40,6 +40,9 @@ const Chat = () => {
 
       socketService.on("getOnlineUsers", handleOnlineUsers);
 
+      // Request current online users as soon as we start listening
+      socketService.emit("getOnlineUsers");
+
       return () => {
         socketService.off("getOnlineUsers", handleOnlineUsers);
       };
@@ -70,7 +73,7 @@ const Chat = () => {
         {/* Sidebar Section */}
         <div
           className={`${selectedUser ? "hidden md:flex" : "flex"
-            } w-full md:w-1/4 flex-col border-r`}
+            } w-full md:w-1/3 lg:w-1/4 flex-col border-r`}
           style={{ borderColor: "var(--border-light, #e5e7eb)", borderWidth: "1px", borderStyle: "solid" }}
         >
           <Sidebar
@@ -88,27 +91,12 @@ const Chat = () => {
             }`}
           style={{ background: "#fff" }}
         >
-          {selectedUser && (
-            <button
-              onClick={() => setSelectedUser(null)}
-              className="md:hidden border rounded-lg text-sm transition"
-              style={{
-                color: "var(--text-main, #111b21)",
-                background: "var(--background, #f0f2f5)",
-                borderColor: "var(--border-light, #e9edef)",
-                borderWidth: "1px",
-                borderStyle: "solid",
-                padding: "0.5rem 1rem",
-                margin: "0.5rem",
-              }}
-              onMouseEnter={(e) => e.target.style.background = "#e5e7eb"}
-              onMouseLeave={(e) => e.target.style.background = "var(--background, #f0f2f5)"}
-            >
-              ← Back
-            </button>
-          )}
-
-          <ChatScreen selectedUser={selectedUser} currentUserId={user?._id} onlineUsers={onlineUsers} />
+          <ChatScreen 
+            selectedUser={selectedUser} 
+            currentUserId={user?._id} 
+            onlineUsers={onlineUsers} 
+            onBack={() => setSelectedUser(null)}
+          />
         </div>
       </div>
     </div>

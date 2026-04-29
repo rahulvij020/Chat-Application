@@ -11,7 +11,12 @@ class SocketService {
   }
 
   connect() {
-    if (this.socket?.connected) return this.socket;
+    if (this.socket) {
+      if (!this.socket.connected) {
+        this.socket.connect();
+      }
+      return this.socket;
+    }
 
     this.socket = io(SOCKET_URL, {
       withCredentials: true,

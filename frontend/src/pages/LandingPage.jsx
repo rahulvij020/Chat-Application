@@ -1,8 +1,30 @@
 import { MessageCircle, ShieldCheck, Users, Zap } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { authCheck } from "../services/auth.js";
+import LoadingScreen from "../components/LoadingScreen.jsx";
 import chatPreview from "../assets/chat_preview.png";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const response = await authCheck();
+        if (response.success && response.user) {
+          navigate("/chat");
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkUser();
+  }, [navigate]);
+
   // inline style to safely use CSS variables with fallback
   const rootStyle = {
     background: "var(--background, #f9fafb)",
@@ -16,26 +38,27 @@ const LandingPage = () => {
 
   const primary = { color: "var(--primary-color, #00a884)" };
 
+  if (loading) return <LoadingScreen />;
+
   return (
     <div className="min-h-screen flex flex-col" style={rootStyle}>
       {/* ===== Navbar ===== */}
       <header
-        className="flex items-center justify-between shadow-md sticky top-0 z-50"
+        className="flex flex-wrap items-center justify-between shadow-md sticky top-0 z-50 px-4 py-4 md:px-10"
         style={{
           ...surfaceStyle,
           borderBottomWidth: 1,
           borderBottomStyle: "solid",
-          padding: "1rem 2.5rem",
         }}
       >
-        <h1 className="text-3xl font-bold" style={primary}>
+        <h1 className="text-2xl md:text-3xl font-bold" style={primary}>
           Chatly
         </h1>
 
-        <nav className="flex items-center font-medium" style={{ color: "var(--text-secondary, #54656f)", gap: "2rem" }}>
+        <nav className="flex items-center font-medium mt-4 sm:mt-0 gap-4 md:gap-8" style={{ color: "var(--text-secondary, #54656f)" }}>
           <a 
             href="#features" 
-            className="transition-colors hover:opacity-80"
+            className="text-sm md:text-base transition-colors hover:opacity-80"
             style={{ color: "var(--text-secondary, #54656f)" }}
             onMouseEnter={(e) => e.target.style.color = "var(--primary-color, #00a884)"}
             onMouseLeave={(e) => e.target.style.color = "var(--text-secondary, #54656f)"}
@@ -44,7 +67,7 @@ const LandingPage = () => {
           </a>
           <a 
             href="#about" 
-            className="transition-colors hover:opacity-80"
+            className="text-sm md:text-base transition-colors hover:opacity-80"
             style={{ color: "var(--text-secondary, #54656f)" }}
             onMouseEnter={(e) => e.target.style.color = "var(--primary-color, #00a884)"}
             onMouseLeave={(e) => e.target.style.color = "var(--text-secondary, #54656f)"}
@@ -53,12 +76,10 @@ const LandingPage = () => {
           </a>
           <Link
             to="/login"
-            className="inline-block rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+            className="inline-block text-sm md:text-base rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 px-4 py-2 md:px-6 md:py-2.5 ml-2 md:ml-4"
             style={{
               background: "var(--primary-color, #00a884)",
               color: "#fff",
-              padding: "0.625rem 1.5rem",
-              marginLeft: "1rem",
             }}
           >
             Get Started
@@ -67,28 +88,27 @@ const LandingPage = () => {
       </header>
 
       {/* ===== Hero Section ===== */}
-      <section className="flex flex-col-reverse md:flex-row items-center justify-between" style={{ ...surfaceStyle, padding: "5rem 2.5rem", gap: "4rem" }}>
+      <section className="flex flex-col-reverse md:flex-row items-center justify-between px-6 py-12 md:px-10 md:py-20 gap-8 md:gap-12 lg:gap-16" style={{ ...surfaceStyle }}>
         {/* Text */}
-        <div className="md:w-1/2 text-center md:text-left animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-          <h2 className="text-5xl md:text-6xl font-extrabold leading-tight" style={{ color: "var(--text-main, #111b21)" }}>
-            Connect Instantly. <br />
+        <div className="md:w-1/2 text-center md:text-left animate-fade-in flex flex-col gap-6 md:gap-8">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight" style={{ color: "var(--text-main, #111b21)" }}>
+            Connect Instantly. <br className="hidden sm:block" />
             <span style={{ color: "var(--primary-color, #00a884)" }}>Chat Effortlessly.</span>
           </h2>
 
-          <p className="text-lg md:text-xl max-w-md mx-auto md:mx-0 leading-relaxed" style={{ color: "var(--text-secondary, #54656f)" }}>
+          <p className="text-base sm:text-lg md:text-xl max-w-md mx-auto md:mx-0 leading-relaxed" style={{ color: "var(--text-secondary, #54656f)" }}>
             Stay connected with your friends, team, or clients — all in one secure,
             modern, and easy-to-use chat platform.
           </p>
 
-          <div style={{ paddingTop: "1rem" }}>
+          <div className="pt-2 md:pt-4">
             <Link
               to="/chat"
-              className="inline-block rounded-xl text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105"
+              className="inline-block rounded-xl text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 px-6 py-3 md:px-10 md:py-4"
               style={{ 
                 background: "linear-gradient(135deg, #00a884, #20c997)",
                 boxShadow: "0 4px 15px rgba(0, 168, 132, 0.3)",
                 color: "#fff",
-                padding: "1rem 2.5rem",
               }}
             >
               Start Messaging
@@ -97,24 +117,24 @@ const LandingPage = () => {
         </div>
 
         {/* Image / Preview */}
-        <div className="md:w-1/2 flex justify-center">
-          <div className="w-[90%] max-w-lg rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-shadow duration-300" style={{ border: "2px solid var(--border-light,#ddd)" }}>
+        <div className="md:w-1/2 flex justify-center w-full">
+          <div className="w-full sm:w-[90%] max-w-lg rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-shadow duration-300" style={{ border: "2px solid var(--border-light,#ddd)" }}>
             <img
               src={chatPreview}
               alt="Chat App Preview"
-              className="w-full h-[480px] object-contain"
+              className="w-full h-auto sm:h-[480px] object-cover sm:object-contain"
             />
           </div>
         </div>
       </section>
 
       {/* ===== Features Section ===== */}
-      <section id="features" style={{ background: "var(--background,#f9fafb)", padding: "6rem 2.5rem" }}>
-        <h3 className="text-4xl md:text-5xl font-bold text-center" style={{ color: "var(--text-main,#111b21)", marginBottom: "4rem" }}>
+      <section id="features" className="px-6 py-16 md:px-10 md:py-24" style={{ background: "var(--background,#f9fafb)" }}>
+        <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-10 md:mb-16" style={{ color: "var(--text-main,#111b21)" }}>
           Why You'll Love Chatly 💬
         </h3>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4" style={{ gap: "2.5rem" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
           {[
             {
               icon: <MessageCircle size={36} />,

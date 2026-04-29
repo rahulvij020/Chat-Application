@@ -1,6 +1,6 @@
-import { Phone, Video, MoreVertical } from "lucide-react";
+import { Phone, Video, MoreVertical, ArrowLeft } from "lucide-react";
 
-const ChatHeader = ({ selectedUser, onlineUsers = [] }) => {
+const ChatHeader = ({ selectedUser, onlineUsers = [], onBack }) => {
   const isOnline = onlineUsers.includes(selectedUser._id);
 
   return (
@@ -16,6 +16,16 @@ const ChatHeader = ({ selectedUser, onlineUsers = [] }) => {
     >
       {/* Left: User Info */}
       <div className="flex items-center" style={{ gap: "0.75rem" }}>
+        {/* Back Button (Mobile Only) */}
+        <button
+          onClick={onBack}
+          className="md:hidden flex items-center justify-center transition"
+          style={{ color: "#6b7280" }}
+          title="Back to chats"
+        >
+          <ArrowLeft size={24} />
+        </button>
+
         {/* Avatar */}
         <div
           className="rounded-full flex items-center justify-center text-white font-semibold text-base overflow-hidden"
