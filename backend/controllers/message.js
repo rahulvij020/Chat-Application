@@ -19,7 +19,14 @@ export const sendMessage = async (req, res, next) => {
             return res.status(400).json({ message: "Cannot send message to yourself" });
         }
         const body = req.body;
-        const { error } = sendMessageValidation(body);
+        // When using multer for a file upload, 'req.body' contains the fields and 'req.file' contains the file.
+        // We simulate 'image' field for Joi if a file is present.
+        const validationData = { ...body };
+        if (req.file) {
+            validationData.image = 'file_uploaded';
+        }
+        
+        const { error } = sendMessageValidation(validationData);
         if (error) {
             return res.status(400).json({ message: error.message, error: error.details });
         }

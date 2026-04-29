@@ -16,7 +16,9 @@ const MessageInput = ({ selectedUser, onMessageSent }) => {
     setLoading(true);
     try {
       const formData = new FormData();
-      formData.append('content', text.trim());
+      if (text.trim()) {
+        formData.append('content', text.trim());
+      }
       if (image) {
         formData.append('image', image);
       }
@@ -59,7 +61,7 @@ const MessageInput = ({ selectedUser, onMessageSent }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center animate-slide-in-up"
+      className="flex items-center w-full animate-slide-in-up"
       style={{
         background: "var(--surface, #fff)",
         borderColor: "var(--border-light, #e5e7eb)",
@@ -133,7 +135,7 @@ const MessageInput = ({ selectedUser, onMessageSent }) => {
         placeholder="Type a message..."
         value={text}
         onChange={(e) => setText(e.target.value)}
-        className="flex-1 rounded-full focus:outline-none transition-all"
+        className="flex-1 min-w-0 rounded-full focus:outline-none transition-all"
         style={{
           background: "var(--background, #f5f5f5)",
           border: "1px solid var(--border-light, #ddd)",

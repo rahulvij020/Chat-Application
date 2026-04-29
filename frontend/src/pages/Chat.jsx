@@ -87,7 +87,7 @@ const Chat = () => {
 
         {/* Chat Section */}
         <div
-          className={`flex flex-col flex-1 ${!selectedUser ? "hidden md:flex" : "flex"
+          className={`flex flex-col flex-1 min-w-0 ${!selectedUser ? "hidden md:flex" : "flex"
             }`}
           style={{ background: "#fff" }}
         >

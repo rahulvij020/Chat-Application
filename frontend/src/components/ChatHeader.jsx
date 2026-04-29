@@ -5,7 +5,7 @@ const ChatHeader = ({ selectedUser, onlineUsers = [], onBack }) => {
 
   return (
     <div
-      className="flex items-center justify-between border-b shadow-sm"
+      className="flex items-center justify-between border-b shadow-sm w-full"
       style={{
         background: "var(--surface, #ffffff)",
         borderColor: "var(--border-light, #e5e7eb)",
