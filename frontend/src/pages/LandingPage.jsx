@@ -44,21 +44,22 @@ const LandingPage = () => {
     <div className="min-h-screen flex flex-col" style={rootStyle}>
       {/* ===== Navbar ===== */}
       <header
-        className="flex flex-wrap items-center justify-between shadow-md sticky top-0 z-50 px-4 py-4 md:px-10"
+        className="flex flex-wrap items-center justify-between shadow-md sticky top-0 z-50"
         style={{
           ...surfaceStyle,
           borderBottomWidth: 1,
           borderBottomStyle: "solid",
+          padding: "1rem 1.5rem",
         }}
       >
         <h1 className="text-2xl md:text-3xl font-bold" style={primary}>
           Chatly
         </h1>
 
-        <nav className="flex items-center font-medium mt-4 sm:mt-0 gap-4 md:gap-8" style={{ color: "var(--text-secondary, #54656f)" }}>
+        <nav className="flex items-center font-medium gap-3 sm:gap-6" style={{ color: "var(--text-secondary, #54656f)" }}>
           <a 
             href="#features" 
-            className="text-sm md:text-base transition-colors hover:opacity-80"
+            className="text-sm sm:text-base font-semibold transition-colors hover:opacity-80 hidden sm:block"
             style={{ color: "var(--text-secondary, #54656f)" }}
             onMouseEnter={(e) => e.target.style.color = "var(--primary-color, #00a884)"}
             onMouseLeave={(e) => e.target.style.color = "var(--text-secondary, #54656f)"}
@@ -67,7 +68,7 @@ const LandingPage = () => {
           </a>
           <a 
             href="#about" 
-            className="text-sm md:text-base transition-colors hover:opacity-80"
+            className="text-sm sm:text-base font-semibold transition-colors hover:opacity-80 hidden sm:block"
             style={{ color: "var(--text-secondary, #54656f)" }}
             onMouseEnter={(e) => e.target.style.color = "var(--primary-color, #00a884)"}
             onMouseLeave={(e) => e.target.style.color = "var(--text-secondary, #54656f)"}
@@ -76,27 +77,29 @@ const LandingPage = () => {
           </a>
           <Link
             to="/login"
-            className="inline-block text-sm md:text-base rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 px-4 py-2 md:px-6 md:py-2.5 ml-2 md:ml-4"
+            className="inline-block text-sm sm:text-base rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             style={{
-              background: "var(--primary-color, #00a884)",
+              background: "linear-gradient(135deg, #00a884, #20c997)",
               color: "#fff",
+              padding: "0.5rem 1rem",
+              marginLeft: "0.5rem",
             }}
           >
-            Get Started
+            Start Chatting
           </Link>
         </nav>
       </header>
 
       {/* ===== Hero Section ===== */}
-      <section className="flex flex-col-reverse md:flex-row items-center justify-between px-6 py-12 md:px-10 md:py-20 gap-8 md:gap-12 lg:gap-16" style={{ ...surfaceStyle }}>
+      <section className="flex flex-col md:flex-row items-center justify-between grow" style={{ ...surfaceStyle, padding: "3rem 1.5rem", gap: "3rem", paddingBottom: "5rem" }}>
         {/* Text */}
-        <div className="md:w-1/2 text-center md:text-left animate-fade-in flex flex-col gap-6 md:gap-8">
+        <div className="md:w-1/2 text-center md:text-left animate-fade-in flex flex-col gap-6 md:gap-8 justify-center">
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight" style={{ color: "var(--text-main, #111b21)" }}>
             Connect Instantly. <br className="hidden sm:block" />
             <span style={{ color: "var(--primary-color, #00a884)" }}>Chat Effortlessly.</span>
           </h2>
 
-          <p className="text-base sm:text-lg md:text-xl max-w-md mx-auto md:mx-0 leading-relaxed" style={{ color: "var(--text-secondary, #54656f)" }}>
+          <p className="text-base sm:text-lg md:text-xl max-w-lg mx-auto md:mx-0 leading-relaxed" style={{ color: "var(--text-secondary, #54656f)" }}>
             Stay connected with your friends, team, or clients — all in one secure,
             modern, and easy-to-use chat platform.
           </p>
@@ -104,11 +107,12 @@ const LandingPage = () => {
           <div className="pt-2 md:pt-4">
             <Link
               to="/chat"
-              className="inline-block rounded-xl text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 px-6 py-3 md:px-10 md:py-4"
+              className="inline-block rounded-xl text-base sm:text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105"
               style={{ 
                 background: "linear-gradient(135deg, #00a884, #20c997)",
                 boxShadow: "0 4px 15px rgba(0, 168, 132, 0.3)",
                 color: "#fff",
+                padding: "1rem 2rem"
               }}
             >
               Start Messaging
@@ -118,23 +122,24 @@ const LandingPage = () => {
 
         {/* Image / Preview */}
         <div className="md:w-1/2 flex justify-center w-full">
-          <div className="w-full sm:w-[90%] max-w-lg rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-shadow duration-300" style={{ border: "2px solid var(--border-light,#ddd)" }}>
+          <div className="w-full sm:w-[90%] max-w-2xl rounded-4xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2" style={{ border: "4px solid rgba(0, 168, 132, 0.1)", background: "var(--surface, #fff)" }}>
             <img
               src={chatPreview}
               alt="Chat App Preview"
-              className="w-full h-auto sm:h-[480px] object-cover sm:object-contain"
+              className="w-full h-auto object-cover"
+              style={{ maxHeight: "600px", objectPosition: "top center" }}
             />
           </div>
         </div>
       </section>
 
       {/* ===== Features Section ===== */}
-      <section id="features" className="px-6 py-16 md:px-10 md:py-24" style={{ background: "var(--background,#f9fafb)" }}>
-        <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-10 md:mb-16" style={{ color: "var(--text-main,#111b21)" }}>
+      <section id="features" style={{ background: "var(--background,#f9fafb)", padding: "4rem 1.5rem" }}>
+        <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center" style={{ color: "var(--text-main,#111b21)", marginBottom: "3rem" }}>
           Why You'll Love Chatly 💬
         </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style={{ gap: "2rem" }}>
           {[
             {
               icon: <MessageCircle size={36} />,
