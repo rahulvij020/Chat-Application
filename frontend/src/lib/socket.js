@@ -48,8 +48,7 @@ class SocketService {
 
   on(event, callback) {
     if (!this.socket) {
-      console.warn("Socket not initialized. Call connect() first.");
-      return;
+      this.connect(); // auto-initialize if listener is attached before explicit connect
     }
     
     this.socket.on(event, callback);
@@ -78,8 +77,7 @@ class SocketService {
 
   emit(event, data) {
     if (!this.socket) {
-      console.warn("Socket not initialized. Call connect() first.");
-      return;
+      this.connect(); // auto-initialize if emitted before explicit connect
     }
     this.socket.emit(event, data);
   }
