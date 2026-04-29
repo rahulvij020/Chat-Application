@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { logout, updateProfile } from "../services/auth.js";
 import { UserCircle, X, LogOut, Save } from "lucide-react";
 import LoadingScreen from "./LoadingScreen.jsx";
+import socketService from "../lib/socket.js";
 
 const ProfileModal = ({ show, onClose, user, setUser }) => {
   const navigate = useNavigate();
@@ -70,6 +71,7 @@ const ProfileModal = ({ show, onClose, user, setUser }) => {
     try {
       const response = await logout();
       if (response.success) {
+        socketService.disconnect();
         navigate("/login");
       }
     } catch (error) {
