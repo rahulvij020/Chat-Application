@@ -4,6 +4,7 @@ import ProfileModal from "./ProfileModal.jsx";
 import SidebarTabs from "./SidebarTabs.jsx";
 import { getChats, getContacts } from "../services/message.js";
 import ChatShimmer from "./ChatShimmer.jsx";
+import socketService from "../lib/socket.js";
 
 const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [], setUser }) => {
   const [search, setSearch] = useState("");
@@ -12,6 +13,36 @@ const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [], setUser }
   const [chats, setChats] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [unreadCounts, setUnreadCounts] = useState({});
+
+  useEffect(() => {
+    const handleNewMessage = ({ message }) => {
+      // If the message is from someone other than the currently selected user
+      if (message.sender !== selectedUser?._id && message.sender !== user?._id) {
+        setUnreadCounts((prev) => ({
+          ...prev,
+          [message.sender]: (prev[message.sender] || 0) + 1,
+        }));
+      }
+    };
+
+    socketService.on("newMessage", handleNewMessage);
+
+    return () => {
+      socketService.off("newMessage", handleNewMessage);
+    };
+  }, [selectedUser, user]);
+
+  // Clear unread count when user is selected
+  useEffect(() => {
+    if (selectedUser?._id && unreadCounts[selectedUser._id]) {
+      setUnreadCounts((prev) => {
+        const newCounts = { ...prev };
+        delete newCounts[selectedUser._id];
+        return newCounts;
+      });
+    }
+  }, [selectedUser, unreadCounts]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -180,11 +211,27 @@ const Sidebar = ({ user, selectedUser, onSelectUser, onlineUsers = [], setUser }
                       />
                     )}
                   </div>
-                  <div>
-                    <p className="font-medium" style={{ color: "var(--text-main, #111)" }}>{item.name}</p>
-                    <p className="text-sm truncate" style={{ color: "#6b7280", maxWidth: "150px" }}>
-                      {item.email}
-                    </p>
+                  <div className="flex-1 flex justify-between items-center px-1">
+                    <div>
+                      <p className="font-medium" style={{ color: "var(--text-main, #111)" }}>{item.name}</p>
+                      <p className="text-sm truncate" style={{ color: "#6b7280", maxWidth: "150px" }}>
+                        {item.email}
+                      </p>
+                    </div>
+                    {/* Unread indicator badge */}
+                    {unreadCounts[itemId] && unreadCounts[itemId] > 0 && (
+                      <div 
+                        className="flex items-center justify-center rounded-full text-white text-xs font-bold"
+                        style={{
+                          background: "var(--primary-color, #00A884)",
+                          minWidth: "1.25rem",
+                          height: "1.25rem",
+                          padding: "0 0.35rem"
+                        }}
+                      >
+                        {unreadCounts[itemId]}
+                      </div>
+                    )}
                   </div>
                 </div>
               );
